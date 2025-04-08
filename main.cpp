@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <iostream>
-#include <chrono>
+//has to be linked with libws3_32.a
 
 using namespace std;
 
@@ -72,6 +72,26 @@ int akceptuj( SOCKET & acces , SOCKET & sock , sockaddr_in * adres , int * len )
     return 0;
 }
 
+int odbierz( SOCKET & sock , char * bufor , int dl_buf )
+{
+    int odb = recv( sock , bufor, dl_buf, 0);
+    if( odb != SOCKET_ERROR)
+    {
+        if(odb == 0 || odb == WSAECONNRESET )
+        {
+            cout << "Connectrion closed \n";
+            return 2;
+        }
+        if( odb < 0 )
+        {
+            cout << "bytes less than zero\n" << WSAGetLastError();
+            return 1;
+        }
+        return 0;
+    }
+    else{ return 3; }
+}
+
 int main()
 {
     WSADATA wsaData;
@@ -87,7 +107,81 @@ int main()
     cout << "Waiting for a client to connect...\n";
     akceptuj( acceptSocket , mainSocket , &adres_klienta , &klient_length );
     cout << "Client connected.\n";
-    //mainSocket = acceptSocket;
+
+
+    int wyslanych;
+    //int odebranych = SOCKET_ERROR;
+    char wysbufor[ 32 ] = "Serwer says hello";
+    char odbbufor[32] = "";
+
+//    wyslanych = send( acceptSocket , wysbufor , strlen( wysbufor ), 0);
+//    printf( "Sent bytes: %d\n" , wyslanych );
+
+//    int odb = 3;
+//
+//    while( odb == 3 )
+//    {
+//        odb = odbierz( acceptSocket , odbbufor , 32 );
+//        switch( odb )
+//        {
+//        case 0:
+//            cout << "Recv: " << odbbufor << endl;
+//            break;
+//        case 1:
+//            cout << "negative bytes" << endl;
+//            return 1;
+//            break;
+//        case 2:
+//            cout << "closed" << endl;
+//            break;
+//        }
+//    }
+    bool truth = true;
+    while(truth)
+    {
+        int a;
+        cout << "type:\n1 to sent.\n2 to recieve.\n3 to shut down.";
+        cin >> a;
+        switch( a )
+        {
+        case 1:
+                wyslanych = send( acceptSocket , wysbufor , strlen( wysbufor ), 0);
+                printf( "Sent bytes: %d\n" , wyslanych );
+                break;
+        case 2:
+            {
+            int odb = 3;
+            while( odb == 3 )
+            {
+                odb = odbierz( acceptSocket , odbbufor , 32 );
+                switch( odb )
+                {
+                case 0:
+                    cout << "Recv: " << odbbufor << endl;
+                    break;
+                case 1:
+                    cout << "negative bytes" << endl;
+                    return 1;
+                    break;
+                case 2:
+                    cout << "closed" << endl;
+                    break;
+                }
+            }
+            break;
+            }
+        case 3:
+            shutdown( acceptSocket , SD_SEND );
+            closesocket( mainSocket );
+            closesocket( acceptSocket );
+            WSACleanup();
+            truth = false;
+            break;
+        }
+    }
+
+    cout << "Press any key to exit:";
+    cin.get();
 
     return 0;
 }
