@@ -101,7 +101,7 @@ int skpt::Skarpeta_Serwer::sluchaj()
 int skpt::Skarpeta_Serwer::akceptuj( SOCKET & acces , sockaddr_in * adres , int * len )
 {
     acces = SOCKET_ERROR;
-    while( acces == SOCKET_ERROR )
+    while(acces == SOCKET_ERROR)
     {
         acces = accept( skarpeta , (struct sockaddr *)adres , len );
     }
@@ -117,44 +117,3 @@ int skpt::Skarpeta_Klient::polacz()
     }
     return 0;
 }
-
-//class Pytanie
-//{
-//public:
-//    enum Odpowiedz { BM, BU, OM, OU };
-//    std::vector<Odpowiedz> odpowiedzi;
-//
-//    int get_amount( Odpowiedz o)
-//    {
-//        int r = 0;
-//        for ( auto x: odpowiedzi)
-//        {
-//            r += (x == o);
-//        }
-//        return r;
-//    }
-//};
-//
-//class Oceniacz {
-//public:
-//    virtual int ocen(const Pytanie &p) const = 0{
-//        return 0;
-//    }
-//};
-//
-//class OceniaczPojWyb : public Oceniacz
-//{
-//public:
-//    virtual int ocen( const Pytanie &p) const override {
-//        return 1;
-//    }
-//};
-//
-//int main()
-//{
-//
-//    OceniaczPojWyb opw;
-//    Oceniacz *o = &opw;
-//    Pytanie p;
-//    std::cout << opw.ocen(p) << "\n";
-//}
