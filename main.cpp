@@ -56,7 +56,7 @@ int main()
 
     WSADATA wsaData;
     skpt::uruchom( &wsaData , cout);
-    skpt::Skarpeta_Serwer server( "127.0.0.1" , 30000 );
+    skpt::Skarpeta_Serwer server( "192.168.1.37" , 30000 );
     server.przypisz();
     server.sluchaj();
 
